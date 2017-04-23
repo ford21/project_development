@@ -34,13 +34,17 @@ function confirmation(){
 		counter++;
 	}
 	if((start_t.value >= end_t.value) & counter == 1){
-		if((start_t.value == "" || end_t.value == "") ){
-			alert("Please set the time!");
+		if((start_t.value == "starting time") ){
+			alert("Please set the start time!");
+			flag = false;
+			counter--;
+		}
+		if(end_t.value == "ending time" ){
+			alert("Please set the end time!");
 			flag = false;
 			counter--;
 		}else{
-			
-			alert("Please check the time!");
+			alert("Please check the time duration!");
 			flag = false;
 			counter--;
 		}
@@ -113,8 +117,8 @@ function confirmation(){
 	</div></br>
 	<div class='indexpicker'>
 		<div class='lead'>
-			<input class='mycl' id='timepicker1' value = '' type='text' name='start_time'/> ".$minus." 
-			<input class='mycl' id='timepicker2' value = '' type='text' name='end_time'/>
+			<input class='mycl' id='timepicker1' value = 'starting time' type='text' name='start_time'/> ".$minus." 
+			<input class='mycl' id='timepicker2' value = 'ending time' type='text' name='end_time'/>
 		</div>
     </div>
 	<div  style='position:relative;display:inline-block; width:250px;'>
