@@ -65,9 +65,14 @@ function validate(){
 			$_SESSION['user_id'] = $row['user_id'];
 			$_SESSION['priority'] = $row['priority'];
 			$_SESSION['name'] = $row['full_name'];
-			$_SESSION['designation']=$row['designation'];
+			$_SESSION['designation']=$row['designation']; 
 			$_SESSION['email'] =$row['email_id'];
-			?><script>window.location.href="home.php";</script><?php
+			$verify = $row['verify'];
+			if($verify == 1){
+				?><script> alert("please verify your mail first"); window.location.href="loginform.php?getfrm=d56b699830e77ba53855679cb1d252da"; </script><?php
+			}else{
+				?><script>window.location.href="home.php";</script><?php
+			}
         }else{
 			?><script>window.location.href="loginform.php?getfrm=d56b699830e77ba53855679cb1d252da";</script><?php
 			$_SESSION['error_message'] = "<font color ='red'>Wrong username or password!</font>";
@@ -95,21 +100,21 @@ function validate(){
 			$query2 = sprintf("SELECT * FROM designation;");
 			$result2 = mysqli_query($conn,$query2);
 			
-			if(isset($_SESSION['fn']) and isset($_SESSION['dp']) and isset($_SESSION['ds']) and isset($_SESSION['un']) and isset($_SESSION['p']) and isset($_SESSION['e']) ){
-				$fn=$_SESSION['fn']; unset($_SESSION['fn']);
-				$dp=$_SESSION['dp'];unset($_SESSION['dp']);
-				$ds=$_SESSION['ds'];unset($_SESSION['ds']);
-				$un=$_SESSION['un'];unset($_SESSION['un']);
-				$p=NULL;
-				$e=$_SESSION['e'];unset($_SESSION['e']);
-			}else{
+			//if(isset($_SESSION['fn']) and isset($_SESSION['dp']) and isset($_SESSION['ds']) and isset($_SESSION['un']) and isset($_SESSION['p']) and isset($_SESSION['e']) ){
+				//$fn=$_SESSION['fn']; unset($_SESSION['fn']);
+				//$dp=$_SESSION['dp'];unset($_SESSION['dp']);
+				//$ds=$_SESSION['ds'];unset($_SESSION['ds']);
+				//$un=$_SESSION['un'];unset($_SESSION['un']);
+				//$p=NULL;
+				//$e=$_SESSION['e'];unset($_SESSION['e']);
+			//}else{
 				$fn=NULL;
 				$dp=NULL;
 				$ds=NULL;
 				$un=NULL;
 				$p=NULL;
 				$e=NULL;
-			}
+			//}
 			
 		echo "
 			<html >
@@ -197,7 +202,7 @@ function validate(){
 			$flg += 1;
 			$designation = $_POST['designation'];
 			$_SESSION['ds'] = $_POST['designation'];
-			
+			/*
 			if(strtoupper($_POST['designation']) == "DIRECTOR"){
 				$query = sprintf("SELECT * FROM user_details;");
 				$result = mysqli_query($conn,$query);
@@ -213,6 +218,7 @@ function validate(){
 				}
 				$flg = 99;
 			}
+			*/
 			
 		}
 		if(isset($_POST['username'])){
@@ -237,6 +243,9 @@ function validate(){
 			$row = mysqli_fetch_array($result);
 			$last_row = $row['user_id'];
 			$last_row = $last_row + 1;
+			$verify = 1;
+			$password_reset = 0;
+			$link = md5(rand(100000,999999));
 			$priority = 99;
 			$query = sprintf("SELECT * FROM designation WHERE designation_name = '$designation';");
 			$result = mysqli_query($conn,$query);
@@ -246,10 +255,12 @@ function validate(){
 			}else{
 				$priority = 99;
 			}
-			$query =sprintf("INSERT INTO user_details VALUES ('$last_row','$priority','$fullname','$designation','$department','$email','$username','$password');");
+			$query =sprintf("INSERT INTO user_details VALUES ('$last_row','$priority','$fullname','$designation','$department','$email','$username','$password','$verify','$password_reset','$link');");
 			$result = mysqli_query($conn,$query);
 			if( mysqli_affected_rows($conn) == 1){
-				?><script>alert ("You have successfully registered!"); window.location.href="loginform.php?getfrm=d56b699830e77ba53855679cb1d252da";</script><?php
+				
+				$_SESSION['BodyContent'] = "<p>Dear <b>$fullname</b>,</p><p>Please Verify your mail with the link provided below. Your can click the link below or copy the url and paste it in your browser.</p>localhost/project/php2/verification.php?verify_key=".$link."</BR><p>If already verify please ignore it.</p><p>thank you.</p>";
+				?><script>alert ("You have successfully registered!"); window.location.href="./email/verifymail.php";</script><?php
 			}else{
 				?><script>alert ("register was unsuccessfully!"); window.location.href="loginform.php?getfrm=d56b699830e77ba53855679cb1d252da";</script><?php
 			}
